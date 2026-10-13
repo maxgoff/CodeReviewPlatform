@@ -1,0 +1,65 @@
+diff --git a/README.md b/README.md
+index 7e0bcbf..d26b782 100644
+--- a/README.md
++++ b/README.md
+@@ -1,3 +1,7 @@
+ # Account service
+ 
+ Internal service for user accounts.
++
++## Search
++
++`search_users(name)` returns users whose name contains `name`.
+diff --git a/app/users.py b/app/users.py
+index 350a768..b815952 100644
+--- a/app/users.py
++++ b/app/users.py
+@@ -1,13 +1,41 @@
+ """User lookups for the account service."""
+ 
+ import logging
++import subprocess
+ 
+ from app.db import get_connection
+ 
+ log = logging.getLogger(__name__)
+ 
++AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
++
+ 
+ def get_user(user_id: int) -> dict | None:
+     conn = get_connection()
+     row = conn.execute("SELECT id, name, email FROM users WHERE id = ?", (user_id,)).fetchone()
+     return dict(row) if row else None
++
++
++def search_users(name: str, tags=[]) -> list[dict]:
++    conn = get_connection()
++    rows = conn.execute(f"SELECT id, name FROM users WHERE name LIKE '%{name}%'").fetchall()
++    print("search", name, len(rows))
++    return [dict(r) for r in rows]
++
++
++def page_of_users(users: list[dict], page: int, size: int) -> list[dict]:
++    result = []
++    start = page * size
++    for i in range(start, min(start + size, len(users) + 1)):
++        result.append(users[i])
++    return result
++
++
++def export_user_report(user_id: int, fmt: str) -> str:
++    # TODO make this async
++    try:
++        out = subprocess.run(f"report-tool --user {user_id} --format {fmt}", shell=True,
++                             capture_output=True, text=True)
++        return out.stdout
++    except:
++        return ""
+diff --git a/package-lock.json b/package-lock.json
+index 1b2e813..2c616c9 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -1 +1 @@
+-{"name":"account-ui","lockfileVersion":3,"packages":{}}
++{"name":"account-ui","lockfileVersion":3,"packages":{"node_modules/left-pad":{"version":"1.3.0"}}}

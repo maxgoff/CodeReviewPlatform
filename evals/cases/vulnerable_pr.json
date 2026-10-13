@@ -1,0 +1,63 @@
+{
+  "diff": "vulnerable_pr.diff",
+  "description": "Hardcoded AWS key, SQL injection, command injection, off-by-one, swallowed exception.",
+  "must_find": [
+    {
+      "path": "app/users.py",
+      "line": 10,
+      "category": "security",
+      "label": "hardcoded AWS key"
+    },
+    {
+      "path": "app/users.py",
+      "line": 21,
+      "category": "security",
+      "label": "SQL injection"
+    },
+    {
+      "path": "app/users.py",
+      "line": 29,
+      "category": "correctness",
+      "label": "off-by-one in pagination"
+    },
+    {
+      "path": "app/users.py",
+      "line": 37,
+      "category": "security",
+      "label": "command injection via shell=True"
+    },
+    {
+      "path": "app/users.py",
+      "line": 40,
+      "category": "correctness",
+      "label": "bare except swallows errors"
+    }
+  ],
+  "acceptable": [
+    {
+      "path": "app/users.py",
+      "line": 19,
+      "label": "mutable default argument / unused param"
+    },
+    {
+      "path": "app/users.py",
+      "line": 22,
+      "label": "debug print"
+    },
+    {
+      "path": "app/users.py",
+      "line": 35,
+      "label": "TODO"
+    },
+    {
+      "path": "app/users.py",
+      "line": 21,
+      "label": "SQL f-string maintainability"
+    },
+    {
+      "path": "app/users.py",
+      "line": 34,
+      "label": "missing tests for new functions"
+    }
+  ]
+}

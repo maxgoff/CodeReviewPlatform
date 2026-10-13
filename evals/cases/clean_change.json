@@ -1,0 +1,12 @@
+{
+  "diff": "clean_change.diff",
+  "description": "A correct, tidy helper. Any finding here is a false positive.",
+  "must_find": [],
+  "acceptable": [
+    {
+      "path": "app/slug.py",
+      "line": 10,
+      "label": "missing tests for new helper"
+    }
+  ]
+}

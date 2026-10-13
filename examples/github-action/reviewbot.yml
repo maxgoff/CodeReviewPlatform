@@ -1,0 +1,30 @@
+# Alternative deployment: run ReviewBot inside CI instead of as a webhook service.
+# The CLI reviews the PR diff and fails the job on high or critical findings.
+name: ReviewBot
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  review:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install .
+      - name: Review diff
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          set +e
+          reviewbot review --git "origin/${{ github.base_ref }}...HEAD" --format markdown --fail-on high > review.md
+          status=$?
+          cat review.md >> "$GITHUB_STEP_SUMMARY"
+          exit $status

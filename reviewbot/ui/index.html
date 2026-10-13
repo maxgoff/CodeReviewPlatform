@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ReviewBot</title>
+  <link rel="icon" href="/ui/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/ui/app.css">
+  <script src="/ui/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="ReviewBot home">
+      <img src="/ui/favicon.svg" alt="" width="26" height="26">
+      <span>ReviewBot</span>
+    </a>
+    <p class="engine" id="engine" aria-live="polite">Connecting…</p>
+  </header>
+
+  <div class="shell">
+    <aside class="rail" aria-labelledby="rail-title">
+      <h2 id="rail-title">Recent reviews</h2>
+      <ul id="jobs" class="jobs"></ul>
+      <p id="jobs-empty" class="rail-empty">Reviews you start appear here until the server restarts.</p>
+    </aside>
+
+    <main class="work">
+      <section class="start" aria-labelledby="start-title">
+        <h1 id="start-title">Review a GitHub repository</h1>
+        <p class="lede">Paste a repository. ReviewBot downloads one commit, shows what it will read and what it should cost,
+          and starts only when you say so.</p>
+
+        <form id="form" autocomplete="off" novalidate>
+          <div class="repo-row">
+            <label class="sr-only" for="repo">Repository</label>
+            <input id="repo" name="repo" type="text" required spellcheck="false"
+                   placeholder="owner/repo or https://github.com/owner/repo">
+            <button type="submit" class="primary" id="plan-btn">Check repository</button>
+          </div>
+          <p class="hint">Also accepts <code>owner/repo@branch</code> and links to a folder, like
+            <code>github.com/psf/requests/tree/main/src</code>.</p>
+
+          <details id="options">
+            <summary>Branch, folder and file patterns</summary>
+            <div class="grid">
+              <label>Branch, tag or commit<input name="ref" type="text" placeholder="default branch" spellcheck="false"></label>
+              <label>Only this folder<input name="path" type="text" placeholder="e.g. src/api" spellcheck="false"></label>
+              <label>Only files matching<input name="include" type="text" placeholder="e.g. *.py *.ts" spellcheck="false"></label>
+              <label>Skip files matching<input name="exclude" type="text" placeholder="e.g. tests/* docs/*" spellcheck="false"></label>
+              <label>File limit<input name="max_files" type="number" min="1" step="1" placeholder="150"></label>
+              <label>Budget in USD<input name="budget_usd" type="number" min="0.01" step="0.01" placeholder="2.00"></label>
+            </div>
+          </details>
+
+          <div id="token-row" class="token-row" hidden>
+            <label for="token">Access token</label>
+            <input id="token" type="password" placeholder="REVIEWBOT_API_TOKEN">
+            <p class="hint">This server requires a token. It's kept in this browser only.</p>
+          </div>
+          <p id="form-error" class="form-error" role="alert" hidden></p>
+        </form>
+      </section>
+
+      <section id="job" class="job" aria-live="polite" hidden></section>
+    </main>
+  </div>
+</body>
+</html>
